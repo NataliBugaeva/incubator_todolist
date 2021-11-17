@@ -33,6 +33,8 @@ import {
     TodoListReducer,
     TodoListReducerType
 } from "./redux/TodoListReducer";
+import {useDispatch, useSelector} from "react-redux";
+import {AppRootStateType} from "./redux/store";
 
 export type FilterValuesType = "all" | "active" | "completed";
 
@@ -42,62 +44,44 @@ export type TodolistType = {
     filter: FilterValuesType
 }
 
-//export type TodoListStateType = Array<TodolistType>;
-
 export type TasksStateType = {
     [key: string]: Array<TaskType>
 }
 
+function AppWithRedux() {
 
-function App() {
-
-    let todolistId1 = v1();
-    let todolistId2 = v1();
-
-    let [tasks, tasksDispatch] = useReducer<TaskReducerType>(TaskReducer, {
-        [todolistId1]: [
-            {id: v1(), title: "HTML&CSS", isDone: true},
-            {id: v1(), title: "JS", isDone: true}
-        ],
-        [todolistId2]: [
-            {id: v1(), title: "Milk", isDone: true},
-            {id: v1(), title: "React Book", isDone: true}
-        ]
-    });
-
-    let [todolists, todolistsDispatch] = useReducer(TodoListReducer, [
-        {id: todolistId1, title: "What to learn", filter: "all"},
-        {id: todolistId2, title: "What to buy", filter: "all"}
-    ])
+    const tasks = useSelector<AppRootStateType, TasksStateType>(state => state.tasks);
+    const todolists = useSelector<AppRootStateType, Array<TodolistType>>(state => state.todolists);
+    const dispatch = useDispatch();
 
     //WWW удаление таски из тудулиста
     function removeTask(id: string, todolistId: string) {
         // setTasks({...tasks, [todolistId]: tasks[todolistId].filter(el => el.id !== id)})
-        tasksDispatch(removeTaskAC(id, todolistId));
+        dispatch(removeTaskAC(id, todolistId));
     }
 
     //WWW добавляем таску в тудулист
     function addTask(title: string, todolistId: string) {
         // setTasks({...tasks, [todolistId]: [{id: v1(), title: title, isDone: false}, ...tasks[todolistId]]})
-        tasksDispatch(addTaskAC(title, todolistId));
+        dispatch(addTaskAC(title, todolistId));
     }
 
     //WWW делаем таску чекнутой либо нет
     function changeStatus(id: string, isDone: boolean, todolistId: string) {
         // setTasks({...tasks, [todolistId]: tasks[todolistId].map(el => el.id === id ? {...el, isDone} : el)})
-        tasksDispatch(changeStatusAC(id, isDone, todolistId));
+        dispatch(changeStatusAC(id, isDone, todolistId));
     }
 
     //WWW по двойному щелчку на наименование таски можем корректировать его
     function changeTaskTitle(id: string, newTitle: string, todolistId: string) {
         // setTasks({...tasks, [todolistId]: tasks[todolistId].map(el => el.id === id ? {...el, title: newTitle} : el)})
-        tasksDispatch(changeTaskTitleAC(id, newTitle, todolistId));
+        dispatch(changeTaskTitleAC(id, newTitle, todolistId));
     }
 
     //WWW по нажатию одной из кнопок(под каждым тудулистом) фильтруем наши таски
     function changeFilter(value: FilterValuesType, todolistId: string) {
         // setTodolists(todolists.map(el => el.id === todolistId ? {...el, filter: value} : el))
-        todolistsDispatch(filterTaskAC(value, todolistId));
+        dispatch(filterTaskAC(value, todolistId));
     }
 
     //WWW создаем новый тудулист
@@ -107,22 +91,20 @@ function App() {
         // setTasks({[newTodoListId]: [], ...tasks})
 
         let action = addNewTodolistAC(title);
-        todolistsDispatch(action);
-        tasksDispatch(action);
-
+        dispatch(action);
     }
 
     //WWW удаляем тудулист
     //еще нужно почистить таски этого тудулиста
     function removeTodolist(id: string) {
-        todolistsDispatch(removeTodolistAC(id));
-        tasksDispatch(removeTodolistAC(id));
+        let action = removeTodolistAC(id);
+        dispatch(action);
     }
 
     //меняем наименование тудулиста по двойному щелчку
     function changeTodolistTitle(id: string, title: string) {
         // setTodolists(todolists.map(el => el.id === id ? {...el, title} : el))
-        todolistsDispatch(changeTodolistTitleAC(id, title));
+        dispatch(changeTodolistTitleAC(id, title));
     }
 
     return (
@@ -196,4 +178,4 @@ function App() {
     );
 }
 
-export default App;
+export default AppWithRedux;

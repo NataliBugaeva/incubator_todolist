@@ -1,7 +1,9 @@
 import { v1 } from "uuid";
 import {FilterValuesType, TodolistType} from "../App";
 
-export const TodoListReducer = (state: Array<TodolistType>, action: GeneralActionType): Array<TodolistType> => {
+const initialState: Array<TodolistType> = [];
+
+export const TodoListReducer = (state: Array<TodolistType> = initialState, action: GeneralActionType): Array<TodolistType> => {
     switch (action.type) {
         case 'FILTER_TASKS': {
             return state.map(el => el.id === action.todolistId ? {...el, filter: action.value} : el);

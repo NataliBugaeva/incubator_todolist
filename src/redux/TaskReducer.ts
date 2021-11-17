@@ -3,7 +3,9 @@ import {TasksStateType} from "../App";
 import {v1} from "uuid";
 import {AddNewTodolistACType, RemoveTodolistACType} from "./TodoListReducer";
 
-export const TaskReducer = (state: TasksStateType, action: GeneralActionType) => {
+const initialState: TasksStateType = {};
+
+export const TaskReducer = (state: TasksStateType = initialState, action: GeneralActionType) => {
     switch (action.type) {
         case 'REMOVE-TASK': {
             return {...state, [action.todolistId]: state[action.todolistId].filter(el => el.id !== action.id)};
@@ -35,9 +37,6 @@ export const TaskReducer = (state: TasksStateType, action: GeneralActionType) =>
         case 'ADD-NEW-TODOLIST': {
            return {...state, [action.todolistId]: []}
         }
-        /*case 'ADD-NEW-TODOLIST-IN-TASKS': {
-            return {[action.todolistId]: [], ...state}
-        }*/
         //здесь использовала action creator из тудулист редьюсера
         case 'REMOVE-TODOLIST': {
             let copyState = {...state};
